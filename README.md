@@ -2,6 +2,8 @@
 
 本地运行的模拟面试 Web 应用。内置题库来自飞书文档《七大方法论面试题库与参考作答》，共 70 道题。
 
+在线地址：[https://ddxlt123.github.io/interview-cockpit/](https://ddxlt123.github.io/interview-cockpit/)
+
 ## 功能
 
 - 每轮随机打乱题目，点击“下一题”切换。
