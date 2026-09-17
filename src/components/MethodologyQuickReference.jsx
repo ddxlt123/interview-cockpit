@@ -19,6 +19,11 @@ export default function MethodologyQuickReference({ methodologies }) {
     setDisplayModes((current) => ({ ...current, [methodId]: mode }))
   }
 
+  const showMethod = (methodId, mode) => {
+    setMode(methodId, mode)
+    setActiveMethodId(methodId)
+  }
+
   const chooseDomain = (domain) => {
     setActiveDomain(domain)
     setActiveMethodId(null)
@@ -26,7 +31,21 @@ export default function MethodologyQuickReference({ methodologies }) {
 
   const hideMethod = (methodId) => {
     setMode(methodId, 'hidden')
-    setActiveMethodId(null)
+    setActiveMethodId((current) => current === methodId ? null : current)
+  }
+
+  const toggleMethod = (methodId, mode, isOpen) => {
+    if (isOpen) {
+      setActiveMethodId(null)
+      return
+    }
+
+    if (mode === 'hidden') {
+      showMethod(methodId, 'summary')
+      return
+    }
+
+    setActiveMethodId(methodId)
   }
 
   return (
@@ -58,14 +77,14 @@ export default function MethodologyQuickReference({ methodologies }) {
                 return (
                   <article className={`method-item ${isOpen ? `open mode-${mode}` : ''}`} key={method.id}>
                     <div className="method-row">
-                      <button className="method-name-button" onClick={() => setActiveMethodId(isOpen ? null : method.id)} aria-expanded={isOpen}>
+                      <button className="method-name-button" onClick={() => toggleMethod(method.id, mode, isOpen)} aria-expanded={isOpen}>
                         <h3>{method.name}</h3><ChevronRight size={18} />
                       </button>
-                      {isOpen ? <div className="method-actions" aria-label={`${method.name}显示方式`}>
-                        <button className={mode === 'summary' ? 'active' : ''} onClick={() => setMode(method.id, 'summary')}>概要</button>
-                        <button className={mode === 'detail' ? 'active' : ''} onClick={() => setMode(method.id, 'detail')}>详情</button>
+                      <div className="method-actions" aria-label={`${method.name}显示方式`}>
+                        <button className={mode === 'summary' ? 'active' : ''} aria-pressed={mode === 'summary'} onClick={() => showMethod(method.id, 'summary')}>概要</button>
+                        <button className={mode === 'detail' ? 'active' : ''} aria-pressed={mode === 'detail'} onClick={() => showMethod(method.id, 'detail')}>详情</button>
                         <button onClick={() => hideMethod(method.id)}><EyeOff size={15} />隐藏</button>
-                      </div> : null}
+                      </div>
                     </div>
                     {isOpen && mode === 'summary' ? <div className="method-summary" aria-live="polite">{method.summary}</div> : null}
                     {isOpen && mode === 'detail' ? (
