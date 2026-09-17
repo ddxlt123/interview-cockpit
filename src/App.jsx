@@ -1,7 +1,8 @@
 import { useMemo, useRef, useState } from 'react'
-import { FileText, Lightbulb, RotateCcw, Upload } from 'lucide-react'
+import { Download, FileText, ImageDown, Lightbulb, RotateCcw } from 'lucide-react'
 import seedQuestions from './data/questions.json'
 import { parseQuestionFile, shuffleQuestions } from './lib/questionBank'
+import { exportQuestionCard } from './lib/exportQuestionCard'
 import Sidebar from './components/Sidebar'
 import RevealPanel from './components/RevealPanel'
 import QuestionLibrary from './components/QuestionLibrary'
@@ -55,6 +56,16 @@ export default function App() {
     setMessage('已重新随机排序')
   }
 
+  const exportCard = async () => {
+    setMessage('正在生成答题卡图片…')
+    try {
+      const filename = await exportQuestionCard(question, index + 1, deck.length)
+      setMessage(`已导出 ${filename}`)
+    } catch {
+      setMessage('答题卡导出失败，请重试')
+    }
+  }
+
   const openQuestion = (questionId) => {
     const targetIndex = deck.findIndex((item) => item.id === questionId)
     if (targetIndex < 0) return
@@ -96,7 +107,8 @@ export default function App() {
           </div>
           <div className="top-actions">
             {activeView === 'practice' ? <button className="icon-action" onClick={restart} title="重新随机排序" aria-label="重新随机排序"><RotateCcw size={19} /></button> : null}
-            {activeView !== 'methodology' ? <button className="import-button" onClick={() => fileInput.current?.click()}><Upload size={20} />导入题库</button> : null}
+            {activeView !== 'methodology' ? <button className="import-button" onClick={() => fileInput.current?.click()} title="导入题库" aria-label="导入题库"><Download size={20} />导入题库</button> : null}
+            {activeView === 'practice' ? <button className="export-button" onClick={exportCard} title="导出当前题目答题卡" aria-label="导出当前题目答题卡"><ImageDown size={20} />导出答题卡</button> : null}
             <input ref={fileInput} type="file" accept=".docx,.md,.txt,.json" onChange={importBank} hidden />
           </div>
         </header>

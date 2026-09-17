@@ -43,10 +43,10 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
 .topbar h1 { margin: 0 0 8px; font-size: 34px; letter-spacing: -.03em; }
 .topbar p { margin: 0; color: var(--muted); font-size: 16px; }
 .top-actions { display: flex; align-items: center; gap: 10px; }
-.import-button, .icon-action { height: 50px; color: var(--blue); border: 1.5px solid var(--blue); background: white; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; transition: background .2s, transform .2s; }
-.import-button { padding: 0 22px; font-size: 16px; }
+.import-button, .export-button, .icon-action { height: 50px; color: var(--blue); border: 1.5px solid var(--blue); background: white; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; transition: background .2s, transform .2s; }
+.import-button, .export-button { padding: 0 22px; font-size: 16px; }
 .icon-action { width: 50px; }
-.import-button:hover, .icon-action:hover { background: var(--blue-pale); transform: translateY(-1px); }
+.import-button:hover, .export-button:hover, .icon-action:hover { background: var(--blue-pale); transform: translateY(-1px); }
 
 .question-stage { flex: 1; padding: 58px clamp(28px, 5vw, 76px) 32px; animation: stage-in .32s ease both; }
 .question-meta { display: flex; align-items: center; gap: 17px; color: var(--muted); font-size: 14px; }
@@ -164,7 +164,8 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
 
 @media (max-width: 640px) {
   .topbar h1 { font-size: 27px; }
-  .import-button { width: 48px; padding: 0; font-size: 0; }
+  .import-button { display: none; }
+  .export-button { width: 48px; padding: 0; font-size: 0; }
   .question-meta { flex-wrap: wrap; gap: 9px 12px; }
   .question-meta strong { width: 100%; }
   .question-meta b { padding-right: 0; border: 0; }
