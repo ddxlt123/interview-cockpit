@@ -47,6 +47,8 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
 .import-button, .export-button, .sync-button { padding: 0 19px; font-size: 15px; white-space: nowrap; }
 .icon-action { width: 50px; }
 .import-button:hover, .export-button:hover, .sync-button:hover, .icon-action:hover { background: var(--blue-pale); transform: translateY(-1px); }
+.sync-button.status-synced { color: #087b66; border-color: #7ac8b7; background: #f1fbf8; }
+.sync-button.status-offline, .sync-button.status-error { color: #9a6100; border-color: #e7b75b; background: #fff9ec; }
 
 .question-stage { flex: 1; padding: 58px clamp(28px, 5vw, 76px) 32px; animation: stage-in .32s ease both; }
 .question-meta { display: flex; align-items: center; gap: 17px; color: var(--muted); font-size: 14px; }
@@ -180,7 +182,7 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
 .star-interview-questions li, .star-detail .star-interview-questions li { padding: 3px 0 7px 4px; font-size: 14px; line-height: 1.65; }
 
 .dialog-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: rgba(4, 14, 27, .58); backdrop-filter: blur(4px); }
-.sync-dialog { position: relative; width: min(520px, 100%); padding: 34px; border-radius: 18px; background: #fff; box-shadow: 0 28px 90px rgba(0, 20, 50, .28); }
+.sync-dialog { position: relative; width: min(590px, 100%); max-height: calc(100vh - 40px); padding: 34px; border-radius: 18px; background: #fff; box-shadow: 0 28px 90px rgba(0, 20, 50, .28); overflow-y: auto; }
 .dialog-close { position: absolute; top: 16px; right: 16px; width: 38px; height: 38px; display: grid; place-items: center; border: 0; border-radius: 50%; background: #f1f4f8; color: #59697d; cursor: pointer; }
 .sync-icon { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 14px; color: #087b66; background: var(--mint-pale); }
 .sync-dialog h2 { margin: 18px 0 8px; font-size: 27px; }
@@ -188,6 +190,33 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
 .sync-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 22px 0; }
 .sync-stats span { padding: 14px; border-radius: 10px; background: #f4f7fb; color: #68778a; text-align: center; font-size: 13px; }
 .sync-stats strong { display: block; margin-bottom: 3px; color: #182a41; font-size: 23px; }
+.cloud-sync-card { padding: 17px; border: 1px solid #c9dcf4; border-radius: 12px; background: #f7faff; }
+.cloud-sync-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.cloud-sync-heading > span { display: flex; align-items: center; gap: 9px; color: #1d4f88; }
+.cloud-status { padding: 5px 9px; border-radius: 99px; background: #e9eff7; color: #66778b; font-size: 11px; font-style: normal; font-weight: 750; white-space: nowrap; }
+.cloud-status.status-synced { background: #dff6ef; color: #087b66; }
+.cloud-status.status-syncing, .cloud-status.status-checking { background: #e5f0ff; color: #075ebf; }
+.cloud-status.status-offline, .cloud-status.status-error { background: #fff0d5; color: #925b00; }
+.cloud-setup-note { margin: 13px 0 0; color: #5f7187; font-size: 13px; line-height: 1.6; }
+.cloud-login { display: grid; gap: 9px; margin-top: 15px; }
+.cloud-login > label { color: #334a65; font-size: 13px; font-weight: 700; }
+.cloud-login > div { min-height: 45px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 9px; padding-left: 12px; border: 1px solid #bfd0e5; border-radius: 9px; background: #fff; color: #75859a; overflow: hidden; }
+.cloud-login input { min-width: 0; height: 43px; border: 0; outline: 0; color: #22364f; font: inherit; }
+.cloud-login button, .cloud-account-actions button { min-height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 7px; background: var(--blue); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; }
+.cloud-login button { align-self: stretch; padding: 0 13px; border-radius: 0; }
+.cloud-login button:disabled, .cloud-account-actions button:disabled { cursor: wait; opacity: .6; }
+.cloud-login > small { color: #77869a; font-size: 11px; }
+.cloud-account { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-top: 15px; }
+.cloud-account > div:first-child { min-width: 0; display: grid; gap: 3px; }
+.cloud-account small, .cloud-account span { color: #77869a; font-size: 11px; }
+.cloud-account strong { overflow: hidden; color: #263d58; text-overflow: ellipsis; }
+.cloud-account-actions { display: flex; gap: 7px; flex-shrink: 0; }
+.cloud-account-actions button { padding: 0 11px; }
+.cloud-account-actions button:last-child { color: #52667e; background: #e7edf4; }
+.cloud-message { margin: 12px 0 0; color: #087b66; font-size: 12px; line-height: 1.5; }
+.cloud-message.error { color: #af3e32; }
+.sync-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0 12px; color: #8794a5; font-size: 11px; font-weight: 700; }
+.sync-divider::before, .sync-divider::after { content: ''; height: 1px; flex: 1; background: var(--line); }
 .sync-actions { display: grid; gap: 10px; }
 .sync-actions > button { min-height: 68px; display: flex; align-items: center; gap: 14px; padding: 12px 17px; border: 1px solid #ced9e5; border-radius: 11px; background: #fff; color: var(--blue); text-align: left; cursor: pointer; }
 .sync-actions > button:hover { border-color: #8dbaf1; background: var(--blue-pale); }
@@ -275,6 +304,10 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
   .star-detail section { padding: 14px; }
   .star-interview-questions { padding: 15px; }
   .sync-dialog { padding: 28px 20px 22px; }
+  .cloud-sync-heading, .cloud-account { align-items: stretch; flex-direction: column; }
+  .cloud-account-actions button { flex: 1; }
+  .cloud-login > div { grid-template-columns: auto minmax(0, 1fr); padding-top: 0; }
+  .cloud-login button { grid-column: 1 / -1; min-height: 42px; margin-left: -12px; border-radius: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

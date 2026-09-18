@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Cloud, Download, FileText, ImageDown, Lightbulb, RotateCcw, Star } from 'lucide-react'
 import seedQuestions from './data/questions.json'
 import { parseQuestionFile, shuffleQuestions } from './lib/questionBank'
@@ -22,6 +22,7 @@ import ProgressSyncDialog from './components/ProgressSyncDialog'
 import methodologies from './data/methodologies.json'
 import starExperiences from './data/starExperiences.json'
 import { ArrowRight } from './components/Icons'
+import useCloudProgressSync from './hooks/useCloudProgressSync'
 
 const STORAGE_KEY = 'interview-cockpit-bank-v1'
 const VIEW_COPY = {
@@ -39,6 +40,18 @@ function loadSavedBank() {
   return { name: '七大方法论面试题库', questions: seedQuestions }
 }
 
+function isSameProgress(first, second) {
+  const keys = new Set([...Object.keys(first), ...Object.keys(second)])
+  return [...keys].every((key) => {
+    const left = first[key] || {}
+    const right = second[key] || {}
+    return left.favorite === right.favorite
+      && left.favoriteUpdatedAt === right.favoriteUpdatedAt
+      && left.proficiency === right.proficiency
+      && left.proficiencyUpdatedAt === right.proficiencyUpdatedAt
+  })
+}
+
 export default function App() {
   const initialBank = useMemo(loadSavedBank, [])
   const [bank, setBank] = useState(initialBank)
@@ -51,10 +64,21 @@ export default function App() {
   const [syncOpen, setSyncOpen] = useState(false)
   const fileInput = useRef(null)
   const progressInput = useRef(null)
+  const applyCloudProgress = useCallback((mergedProgress) => {
+    setProgress((current) => {
+      if (isSameProgress(current, mergedProgress)) return current
+      saveStudyProgress(mergedProgress)
+      return mergedProgress
+    })
+  }, [])
+  const cloudSync = useCloudProgressSync({ progress, onProgressMerged: applyCloudProgress })
   const question = deck[index]
   const currentProgress = getQuestionProgress(progress, question)
   const [viewTitle, viewDescription] = VIEW_COPY[activeView]
   const isReferenceView = activeView === 'methodology' || activeView === 'star'
+  const syncButtonLabel = !cloudSync.email
+    ? '同步进度'
+    : ({ syncing: '同步中', offline: '待联网', error: '同步异常', synced: '已同步' }[cloudSync.status] || '同步进度')
 
   const chooseReveal = (type) => setReveal((current) => (current === type ? null : type))
 
@@ -160,7 +184,7 @@ export default function App() {
             {activeView === 'practice' ? <button className="icon-action" onClick={restart} title="重新随机排序" aria-label="重新随机排序"><RotateCcw size={19} /></button> : null}
             {!isReferenceView ? <button className="import-button" onClick={() => fileInput.current?.click()} title="导入题库" aria-label="导入题库"><Download size={20} />导入题库</button> : null}
             {activeView === 'practice' ? <button className="export-button" onClick={exportCard} title="导出当前题目答题卡" aria-label="导出当前题目答题卡"><ImageDown size={20} />导出答题卡</button> : null}
-            {!isReferenceView ? <button className="sync-button" onClick={() => setSyncOpen(true)} title="同步学习进度" aria-label="同步学习进度"><Cloud size={20} />同步进度</button> : null}
+            {!isReferenceView ? <button className={`sync-button status-${cloudSync.status}`} onClick={() => setSyncOpen(true)} title={syncButtonLabel} aria-label={syncButtonLabel}><Cloud size={20} />{syncButtonLabel}</button> : null}
             <input ref={fileInput} type="file" accept=".docx,.md,.txt,.json" onChange={importBank} hidden />
             <input ref={progressInput} type="file" accept="application/json,.json" onChange={importProgress} hidden />
           </div>
@@ -202,8 +226,16 @@ export default function App() {
       {syncOpen ? (
         <ProgressSyncDialog
           assessedCount={Object.values(progress).filter((entry) => entry.proficiency && entry.proficiency !== 'unrated').length}
+          cloudConfigured={cloudSync.configured}
+          cloudEmail={cloudSync.email}
+          cloudMessage={cloudSync.message}
+          cloudStatus={cloudSync.status}
           favoriteCount={Object.values(progress).filter((entry) => entry.favorite).length}
+          lastSyncedAt={cloudSync.lastSyncedAt}
           onClose={() => setSyncOpen(false)}
+          onCloudSignIn={cloudSync.signIn}
+          onCloudSignOut={cloudSync.signOut}
+          onCloudSync={cloudSync.syncNow}
           onExport={() => downloadStudyProgress(progress)}
           onImport={() => progressInput.current?.click()}
         />
