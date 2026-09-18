@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:pages": "VITE_BASE_PATH=/interview-cockpit/ vite build",
+    "check:cloud": "node scripts/check-cloud-config.mjs",
+    "deploy": "npm run check:cloud && npm run build:pages && gh-pages -d dist",
     "test": "vitest run",
     "preview": "vite preview"
   },
@@ -19,6 +22,7 @@
     "vite": "latest"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "vite-plugin-pwa": "latest",
     "vitest": "latest"
   }

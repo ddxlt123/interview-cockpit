@@ -35,6 +35,12 @@ npm run build
 
 跨设备自动同步需要一次性配置 Supabase，详见 [SUPABASE_SYNC_SETUP.md](./SUPABASE_SYNC_SETUP.md)。未配置时，应用仍会完整保留本地进度和 JSON 导入/导出功能。
 
+配置完成后发布到 GitHub Pages：
+
+```bash
+npm run deploy
+```
+
 ## 安装到手机
 
 部署到 HTTPS 地址后，先联网打开一次：

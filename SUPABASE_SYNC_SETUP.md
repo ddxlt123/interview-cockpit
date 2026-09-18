@@ -43,8 +43,10 @@ publishable key 本来就用于浏览器，可以随前端发布。不要把 `se
 
 ```bash
 npm test
-VITE_BASE_PATH=/interview-cockpit/ npm run build
+npm run deploy
 ```
+
+`npm run deploy` 会依次检查两个云端参数、按 GitHub Pages 路径构建，然后更新 `gh-pages` 分支。如果参数缺失、网址格式不正确，或误用了非 publishable key，命令会在发布前停止，现有在线网站不会被覆盖。
 
 本地验证时运行 `npm run dev`，在同步窗口输入邮箱并点击邮件链接。登录后修改一题的收藏或熟练度，再用另一台设备以同一邮箱登录；两端应自动得到合并后的最新进度。
 
