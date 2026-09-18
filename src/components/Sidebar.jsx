@@ -1,4 +1,4 @@
-import { BookOpen, CheckCircle2, FileText, Layers3, LockKeyhole } from 'lucide-react'
+import { BookMarked, BookOpen, CheckCircle2, FileText, Layers3, LockKeyhole } from 'lucide-react'
 import { BrandMark } from './Icons'
 
 export default function Sidebar({ activeView, bankName, onViewChange, questionCount }) {
@@ -9,6 +9,7 @@ export default function Sidebar({ activeView, bankName, onViewChange, questionCo
         <button className={`nav-item ${activeView === 'practice' ? 'active' : ''}`} onClick={() => onViewChange('practice')}><FileText size={20} />模拟面试</button>
         <button className={`nav-item ${activeView === 'library' ? 'active' : ''}`} onClick={() => onViewChange('library')}><BookOpen size={20} />题库</button>
         <button className={`nav-item ${activeView === 'methodology' ? 'active' : ''}`} onClick={() => onViewChange('methodology')}><Layers3 size={20} />方法论速查</button>
+        <button className={`nav-item ${activeView === 'star' ? 'active' : ''}`} onClick={() => onViewChange('star')}><BookMarked size={20} />STAR 合集</button>
       </nav>
 
       <section className="bank-status" aria-label="当前题库">

@@ -17,8 +17,10 @@ import Sidebar from './components/Sidebar'
 import RevealPanel from './components/RevealPanel'
 import QuestionLibrary from './components/QuestionLibrary'
 import MethodologyQuickReference from './components/MethodologyQuickReference'
+import StarCollection from './components/StarCollection'
 import ProgressSyncDialog from './components/ProgressSyncDialog'
 import methodologies from './data/methodologies.json'
+import starExperiences from './data/starExperiences.json'
 import { ArrowRight } from './components/Icons'
 
 const STORAGE_KEY = 'interview-cockpit-bank-v1'
@@ -26,6 +28,7 @@ const VIEW_COPY = {
   practice: ['模拟面试', '从题库随机抽题，先独立作答，再按需查看提示与参考答案。'],
   library: ['全部题目', '浏览、搜索全部题目，选择任意一题开始练习。'],
   methodology: ['方法论速查', '按领域查找方法论，按需查看速记概要或完整记忆句。'],
+  star: ['STAR 合集', '集中复习个人项目经历，按需查看行动链概要或完整 STAR 内容。'],
 }
 
 function loadSavedBank() {
@@ -51,6 +54,7 @@ export default function App() {
   const question = deck[index]
   const currentProgress = getQuestionProgress(progress, question)
   const [viewTitle, viewDescription] = VIEW_COPY[activeView]
+  const isReferenceView = activeView === 'methodology' || activeView === 'star'
 
   const chooseReveal = (type) => setReveal((current) => (current === type ? null : type))
 
@@ -154,9 +158,9 @@ export default function App() {
           </div>
           <div className="top-actions">
             {activeView === 'practice' ? <button className="icon-action" onClick={restart} title="重新随机排序" aria-label="重新随机排序"><RotateCcw size={19} /></button> : null}
-            {activeView !== 'methodology' ? <button className="import-button" onClick={() => fileInput.current?.click()} title="导入题库" aria-label="导入题库"><Download size={20} />导入题库</button> : null}
+            {!isReferenceView ? <button className="import-button" onClick={() => fileInput.current?.click()} title="导入题库" aria-label="导入题库"><Download size={20} />导入题库</button> : null}
             {activeView === 'practice' ? <button className="export-button" onClick={exportCard} title="导出当前题目答题卡" aria-label="导出当前题目答题卡"><ImageDown size={20} />导出答题卡</button> : null}
-            {activeView !== 'methodology' ? <button className="sync-button" onClick={() => setSyncOpen(true)} title="同步学习进度" aria-label="同步学习进度"><Cloud size={20} />同步进度</button> : null}
+            {!isReferenceView ? <button className="sync-button" onClick={() => setSyncOpen(true)} title="同步学习进度" aria-label="同步学习进度"><Cloud size={20} />同步进度</button> : null}
             <input ref={fileInput} type="file" accept=".docx,.md,.txt,.json" onChange={importBank} hidden />
             <input ref={progressInput} type="file" accept="application/json,.json" onChange={importProgress} hidden />
           </div>
@@ -193,7 +197,7 @@ export default function App() {
           <div className="progress-copy"><strong>{index + 1} / {deck.length}</strong><div className="progress-track"><span style={{ width: `${((index + 1) / deck.length) * 100}%` }} /></div></div>
           {message && <p className="toast" role="status">{message}</p>}
           <button className="next-button" onClick={nextQuestion}>下一题<ArrowRight /></button>
-        </footer></> : activeView === 'library' ? <QuestionLibrary questions={bank.questions} onSelectQuestion={openQuestion} progress={progress} /> : <MethodologyQuickReference methodologies={methodologies} />}
+        </footer></> : activeView === 'library' ? <QuestionLibrary questions={bank.questions} onSelectQuestion={openQuestion} progress={progress} /> : activeView === 'methodology' ? <MethodologyQuickReference methodologies={methodologies} /> : <StarCollection experiences={starExperiences} />}
       </section>
       {syncOpen ? (
         <ProgressSyncDialog
