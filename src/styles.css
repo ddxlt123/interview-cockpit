@@ -164,6 +164,7 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
 .star-content-head > strong { color: #627188; font-size: 13px; }
 .star-list { max-width: 1120px; }
 .star-summary { font-size: 18px; line-height: 1.65; letter-spacing: 0; }
+.star-summary > p { margin: 0; }
 .star-detail { display: grid; gap: 14px; }
 .star-detail section { padding: 16px 18px; border: 1px solid #cfe8e2; border-radius: 9px; background: rgba(255, 255, 255, .72); }
 .star-detail section > strong { display: flex; align-items: center; gap: 9px; color: #087c66; font-size: 16px; }
@@ -171,6 +172,12 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
 .star-detail p { margin: 10px 0 0; color: #2d4658; font-size: 15px; line-height: 1.75; }
 .star-detail ol { margin: 11px 0 0; padding-left: 23px; color: #2d4658; }
 .star-detail li { padding: 3px 0 7px 4px; font-size: 15px; line-height: 1.72; }
+.star-interview-questions { margin-top: 18px; padding: 17px 19px; border: 1px solid #cbdff8; border-radius: 9px; background: rgba(255, 255, 255, .82); color: #263f5f; font-size: 15px; font-weight: 500; letter-spacing: 0; }
+.star-detail .star-interview-questions { margin-top: 2px; background: #f4f8ff; }
+.star-questions-heading { display: flex; align-items: center; gap: 8px; color: #145da8; }
+.star-questions-heading strong { font-size: 15px; }
+.star-interview-questions ol, .star-detail .star-interview-questions ol { margin: 11px 0 0; padding-left: 24px; color: #334d6c; }
+.star-interview-questions li, .star-detail .star-interview-questions li { padding: 3px 0 7px 4px; font-size: 14px; line-height: 1.65; }
 
 .dialog-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: rgba(4, 14, 27, .58); backdrop-filter: blur(4px); }
 .sync-dialog { position: relative; width: min(520px, 100%); padding: 34px; border-radius: 18px; background: #fff; box-shadow: 0 28px 90px rgba(0, 20, 50, .28); }
@@ -266,6 +273,7 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
   .star-summary { font-size: 16px; }
   .star-detail { padding: 14px; }
   .star-detail section { padding: 14px; }
+  .star-interview-questions { padding: 15px; }
   .sync-dialog { padding: 28px 20px 22px; }
 }
 

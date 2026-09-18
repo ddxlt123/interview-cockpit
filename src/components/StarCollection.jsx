@@ -1,5 +1,14 @@
 import { useState } from 'react'
-import { ChevronRight, EyeOff } from 'lucide-react'
+import { ChevronRight, EyeOff, MessageCircleQuestion } from 'lucide-react'
+
+function InterviewQuestions({ questions, tone }) {
+  return (
+    <aside className={`star-interview-questions tone-${tone}`} aria-label="面试官可能会问的问题">
+      <div className="star-questions-heading"><MessageCircleQuestion size={19} /><strong>面试官可能会这么问</strong></div>
+      <ol>{questions.map((question) => <li key={question}>{question}</li>)}</ol>
+    </aside>
+  )
+}
 
 export default function StarCollection({ experiences }) {
   const [activeStarId, setActiveStarId] = useState(null)
@@ -59,7 +68,10 @@ export default function StarCollection({ experiences }) {
               </div>
 
               {isOpen && mode === 'summary' ? (
-                <div className="method-summary star-summary" aria-live="polite">{experience.summary}</div>
+                <div className="method-summary star-summary" aria-live="polite">
+                  <p>{experience.summary}</p>
+                  <InterviewQuestions questions={experience.interviewQuestions} tone="summary" />
+                </div>
               ) : null}
 
               {isOpen && mode === 'detail' ? (
@@ -71,6 +83,7 @@ export default function StarCollection({ experiences }) {
                     <ol>{experience.actions.map((action) => <li key={action}>{action}</li>)}</ol>
                   </section>
                   <section><strong><b>R</b> · 结果</strong><p>{experience.result}</p></section>
+                  <InterviewQuestions questions={experience.interviewQuestions} tone="detail" />
                 </div>
               ) : null}
             </article>

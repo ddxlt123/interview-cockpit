@@ -13,7 +13,15 @@ describe('STAR collection data', () => {
       expect(item.task.length).toBeGreaterThan(10)
       expect(item.actions.length).toBeGreaterThan(0)
       expect(item.result.length).toBeGreaterThan(10)
+      expect(item.interviewQuestions).toHaveLength(3)
+      expect(item.interviewQuestions.every((question) => question.endsWith('？'))).toBe(true)
     }
+  })
+
+  it('contains 21 distinct interview questions', () => {
+    const questions = starExperiences.flatMap((item) => item.interviewQuestions)
+    expect(questions).toHaveLength(21)
+    expect(new Set(questions).size).toBe(21)
   })
 
   it('preserves the source metrics for the quality-risk example', () => {
