@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { getCloudAuthErrorMessage } from '../lib/cloudAuth'
 import { syncProgressWithCloud } from '../lib/cloudProgress'
 import { getAuthRedirectUrl, getSupabaseClient, isSupabaseConfigured } from '../lib/supabaseClient'
 
@@ -110,7 +111,7 @@ export default function useCloudProgressSync({ progress, onProgressMerged }) {
     })
     if (error) {
       setStatus('error')
-      setMessage(error.message)
+      setMessage(getCloudAuthErrorMessage(error))
       return
     }
     setStatus('link-sent')
