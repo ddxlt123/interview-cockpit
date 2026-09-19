@@ -59,41 +59,68 @@ export default function useCloudProgressSync({ progress, onProgressMerged }) {
     runSyncRef.current = runSync
   }, [runSync])
 
+  const checkSession = useCallback(async () => {
+    if (!client) return false
+    const { data, error } = await client.auth.getSession()
+    if (error) {
+      setStatus('error')
+      setMessage(getCloudAuthErrorMessage(error))
+      return false
+    }
+
+    const currentUser = data.session?.user || null
+    setUser(currentUser)
+    if (currentUser) {
+      setStatus('syncing')
+      setMessage('')
+      return true
+    }
+
+    setStatus((current) => (current === 'link-sent' ? current : 'signed-out'))
+    return false
+  }, [client])
+
   useEffect(() => {
     if (!client) return undefined
-    let mounted = true
 
-    client.auth.getSession().then(({ data, error }) => {
-      if (!mounted) return
-      if (error) {
-        setStatus('error')
-        setMessage(error.message)
-        return
-      }
-      const currentUser = data.session?.user || null
-      setUser(currentUser)
-      setStatus(currentUser ? 'syncing' : 'signed-out')
-    })
+    checkSession()
 
     const { data: authListener } = client.auth.onAuthStateChange((_event, session) => {
       const currentUser = session?.user || null
       setUser(currentUser)
-      setStatus(currentUser ? 'syncing' : 'signed-out')
-      if (!currentUser) setLastSyncedAt('')
+      if (currentUser) {
+        setStatus('syncing')
+        setMessage('')
+      } else {
+        setStatus((current) => (current === 'link-sent' ? current : 'signed-out'))
+        setLastSyncedAt('')
+      }
     })
 
     const handleOnline = () => runSyncRef.current?.()
     const handleOffline = () => setStatus(userRef.current ? 'offline' : 'signed-out')
+    const handleFocus = () => checkSession()
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') checkSession()
+    }
+    const handleStorage = (event) => {
+      if (!event.key || event.key.startsWith('sb-')) checkSession()
+    }
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
+    window.addEventListener('focus', handleFocus)
+    window.addEventListener('storage', handleStorage)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
-      mounted = false
       authListener.subscription.unsubscribe()
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
+      window.removeEventListener('focus', handleFocus)
+      window.removeEventListener('storage', handleStorage)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [client])
+  }, [checkSession, client])
 
   useEffect(() => {
     if (!user) return undefined
@@ -115,7 +142,7 @@ export default function useCloudProgressSync({ progress, onProgressMerged }) {
       return
     }
     setStatus('link-sent')
-    setMessage('登录链接已发送，请在邮件中点击确认')
+    setMessage('登录链接已发送。请在需要登录的这台设备上打开邮件链接；在其他设备点击，只会登录其他设备。')
   }, [client])
 
   const signOut = useCallback(async () => {
@@ -135,6 +162,7 @@ export default function useCloudProgressSync({ progress, onProgressMerged }) {
     email: user?.email || '',
     lastSyncedAt,
     message,
+    checkSession,
     signIn,
     signOut,
     status,

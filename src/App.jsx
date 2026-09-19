@@ -233,6 +233,7 @@ export default function App() {
           favoriteCount={Object.values(progress).filter((entry) => entry.favorite).length}
           lastSyncedAt={cloudSync.lastSyncedAt}
           onClose={() => setSyncOpen(false)}
+          onCloudCheckSession={cloudSync.checkSession}
           onCloudSignIn={cloudSync.signIn}
           onCloudSignOut={cloudSync.signOut}
           onCloudSync={cloudSync.syncNow}

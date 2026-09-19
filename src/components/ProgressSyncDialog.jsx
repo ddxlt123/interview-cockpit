@@ -3,7 +3,7 @@ import { Cloud, Download, FileUp, LogOut, Mail, RefreshCw, ShieldCheck, X } from
 
 const STATUS_COPY = {
   checking: '正在检查登录状态',
-  'link-sent': '等待邮件确认',
+  'link-sent': '等待本机打开邮件',
   'signed-out': '未登录',
   syncing: '正在同步',
   synced: '已同步',
@@ -26,6 +26,7 @@ export default function ProgressSyncDialog({
   favoriteCount,
   lastSyncedAt,
   onClose,
+  onCloudCheckSession,
   onCloudSignIn,
   onCloudSignOut,
   onCloudSync,
@@ -71,11 +72,14 @@ export default function ProgressSyncDialog({
               </div>
             </div>
           ) : (
-            <form className="cloud-login" onSubmit={submitEmail}>
-              <label htmlFor="sync-email">邮箱登录</label>
-              <div><Mail size={18} /><input id="sync-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="输入邮箱地址" autoComplete="email" required /><button type="submit" disabled={isBusy}>发送登录链接</button></div>
-              <small>在电脑和手机上使用同一邮箱，即可共享学习进度。</small>
-            </form>
+            <div className="cloud-login-panel">
+              <form className="cloud-login" onSubmit={submitEmail}>
+                <label htmlFor="sync-email">邮箱登录</label>
+                <div><Mail size={18} /><input id="sync-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="输入邮箱地址" autoComplete="email" required /><button type="submit" disabled={isBusy}>发送登录链接</button></div>
+                <small>每台设备都需要各自登录，并在该设备上打开邮件链接；使用同一邮箱即可共享进度。</small>
+              </form>
+              {cloudStatus === 'link-sent' ? <button type="button" className="cloud-session-check" onClick={onCloudCheckSession}><RefreshCw size={16} />我已打开链接，重新检查</button> : null}
+            </div>
           )}
 
           {cloudMessage ? <p className={`cloud-message ${cloudStatus === 'error' ? 'error' : ''}`} role="status">{cloudMessage}</p> : null}

@@ -206,6 +206,8 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
 .cloud-login button { align-self: stretch; padding: 0 13px; border-radius: 0; }
 .cloud-login button:disabled, .cloud-account-actions button:disabled { cursor: wait; opacity: .6; }
 .cloud-login > small { color: #77869a; font-size: 11px; }
+.cloud-session-check { min-height: 38px; margin-top: 10px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid #9dbce0; border-radius: 7px; background: #fff; color: #1d5f9f; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.cloud-session-check:hover { background: #edf5ff; }
 .cloud-account { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-top: 15px; }
 .cloud-account > div:first-child { min-width: 0; display: grid; gap: 3px; }
 .cloud-account small, .cloud-account span { color: #77869a; font-size: 11px; }
