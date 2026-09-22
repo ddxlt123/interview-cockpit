@@ -14,17 +14,10 @@ const DEFAULT_ENTRY = {
   proficiencyUpdatedAt: '',
 }
 
-function hashText(value) {
-  let hash = 2166136261
-  for (const character of String(value)) {
-    hash ^= character.codePointAt(0)
-    hash = Math.imul(hash, 16777619)
-  }
-  return (hash >>> 0).toString(36)
-}
+const ALLOWED_PROFICIENCIES = new Set(PROFICIENCY_OPTIONS.map((option) => option.value))
 
 export function getProgressKey(question) {
-  return `${question.id}:${hashText(`${question.question}\n${question.answer}`)}`
+  return String(question.id)
 }
 
 export function getQuestionProgress(progress, question) {
@@ -32,8 +25,9 @@ export function getQuestionProgress(progress, question) {
 }
 
 export function updateQuestionProgress(progress, question, changes, now = new Date().toISOString()) {
+  const normalizedProgress = normalizeStudyProgress(progress)
   const key = getProgressKey(question)
-  const current = { ...DEFAULT_ENTRY, ...(progress[key] || {}) }
+  const current = { ...DEFAULT_ENTRY, ...(normalizedProgress[key] || {}) }
   const next = { ...current }
 
   if (Object.hasOwn(changes, 'favorite')) {
@@ -41,12 +35,11 @@ export function updateQuestionProgress(progress, question, changes, now = new Da
     next.favoriteUpdatedAt = now
   }
   if (Object.hasOwn(changes, 'proficiency')) {
-    const allowed = new Set(PROFICIENCY_OPTIONS.map((option) => option.value))
-    next.proficiency = allowed.has(changes.proficiency) ? changes.proficiency : 'unrated'
+    next.proficiency = ALLOWED_PROFICIENCIES.has(changes.proficiency) ? changes.proficiency : 'unrated'
     next.proficiencyUpdatedAt = now
   }
 
-  return { ...progress, [key]: next }
+  return { ...normalizedProgress, [key]: next }
 }
 
 function pickLatest(localEntry, remoteEntry, field, timestampField) {
@@ -55,22 +48,41 @@ function pickLatest(localEntry, remoteEntry, field, timestampField) {
   return remoteTime > localTime ? remoteEntry[field] : localEntry[field]
 }
 
+function mergeProgressEntry(localValue, remoteValue) {
+  const localEntry = { ...DEFAULT_ENTRY, ...(localValue || {}) }
+  const remoteEntry = { ...DEFAULT_ENTRY, ...(remoteValue || {}) }
+  const favoriteFromRemote = (Date.parse(remoteEntry.favoriteUpdatedAt) || 0) > (Date.parse(localEntry.favoriteUpdatedAt) || 0)
+  const proficiencyFromRemote = (Date.parse(remoteEntry.proficiencyUpdatedAt) || 0) > (Date.parse(localEntry.proficiencyUpdatedAt) || 0)
+
+  return {
+    favorite: pickLatest(localEntry, remoteEntry, 'favorite', 'favoriteUpdatedAt'),
+    favoriteUpdatedAt: favoriteFromRemote ? remoteEntry.favoriteUpdatedAt : localEntry.favoriteUpdatedAt,
+    proficiency: pickLatest(localEntry, remoteEntry, 'proficiency', 'proficiencyUpdatedAt'),
+    proficiencyUpdatedAt: proficiencyFromRemote ? remoteEntry.proficiencyUpdatedAt : localEntry.proficiencyUpdatedAt,
+  }
+}
+
+function normalizeProgressKey(key) {
+  const legacyKey = String(key).match(/^(.+):[a-z0-9]{1,7}$/i)
+  return legacyKey ? legacyKey[1] : String(key)
+}
+
+export function normalizeStudyProgress(progress = {}) {
+  return Object.entries(progress).reduce((normalized, [rawKey, entry]) => {
+    const key = normalizeProgressKey(rawKey)
+    normalized[key] = mergeProgressEntry(normalized[key], entry)
+    return normalized
+  }, {})
+}
+
 export function mergeStudyProgress(localProgress = {}, remoteProgress = {}) {
+  const normalizedLocal = normalizeStudyProgress(localProgress)
+  const normalizedRemote = normalizeStudyProgress(remoteProgress)
   const merged = {}
-  const keys = new Set([...Object.keys(localProgress), ...Object.keys(remoteProgress)])
+  const keys = new Set([...Object.keys(normalizedLocal), ...Object.keys(normalizedRemote)])
 
   keys.forEach((key) => {
-    const localEntry = { ...DEFAULT_ENTRY, ...(localProgress[key] || {}) }
-    const remoteEntry = { ...DEFAULT_ENTRY, ...(remoteProgress[key] || {}) }
-    const favoriteFromRemote = (Date.parse(remoteEntry.favoriteUpdatedAt) || 0) > (Date.parse(localEntry.favoriteUpdatedAt) || 0)
-    const proficiencyFromRemote = (Date.parse(remoteEntry.proficiencyUpdatedAt) || 0) > (Date.parse(localEntry.proficiencyUpdatedAt) || 0)
-
-    merged[key] = {
-      favorite: pickLatest(localEntry, remoteEntry, 'favorite', 'favoriteUpdatedAt'),
-      favoriteUpdatedAt: favoriteFromRemote ? remoteEntry.favoriteUpdatedAt : localEntry.favoriteUpdatedAt,
-      proficiency: pickLatest(localEntry, remoteEntry, 'proficiency', 'proficiencyUpdatedAt'),
-      proficiencyUpdatedAt: proficiencyFromRemote ? remoteEntry.proficiencyUpdatedAt : localEntry.proficiencyUpdatedAt,
-    }
+    merged[key] = mergeProgressEntry(normalizedLocal[key], normalizedRemote[key])
   })
 
   return merged
@@ -79,7 +91,12 @@ export function mergeStudyProgress(localProgress = {}, remoteProgress = {}) {
 export function loadStudyProgress(storage = window.localStorage) {
   try {
     const saved = JSON.parse(storage.getItem(PROGRESS_STORAGE_KEY))
-    return saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {}
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return {}
+    const normalized = normalizeStudyProgress(saved)
+    try {
+      storage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(normalized))
+    } catch { /* keep recovered progress in memory when storage is unavailable */ }
+    return normalized
   } catch {
     return {}
   }
