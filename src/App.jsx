@@ -84,8 +84,10 @@ export default function App() {
 
   const nextQuestion = () => {
     setReveal(null)
-    if (index + 1 < deck.length) setIndex((value) => value + 1)
-    else {
+    if (index + 1 < deck.length) {
+      setIndex((value) => value + 1)
+      setMessage('')
+    } else {
       setDeck(shuffleQuestions(bank.questions))
       setIndex(0)
       setMessage('已完成一轮，题目顺序已重新打乱')
