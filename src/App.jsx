@@ -21,7 +21,7 @@ import StarCollection from './components/StarCollection'
 import ProgressSyncDialog from './components/ProgressSyncDialog'
 import methodologies from './data/methodologies.json'
 import starExperiences from './data/starExperiences.json'
-import { ArrowRight } from './components/Icons'
+import { ArrowLeft, ArrowRight } from './components/Icons'
 import useCloudProgressSync from './hooks/useCloudProgressSync'
 
 const STORAGE_KEY = 'interview-cockpit-bank-v1'
@@ -92,6 +92,13 @@ export default function App() {
       setIndex(0)
       setMessage('已完成一轮，题目顺序已重新打乱')
     }
+  }
+
+  const previousQuestion = () => {
+    if (index === 0) return
+    setIndex((value) => value - 1)
+    setReveal(null)
+    setMessage('')
   }
 
   const restart = () => {
@@ -222,7 +229,10 @@ export default function App() {
         <footer className="progress-footer">
           <div className="progress-copy"><strong>{index + 1} / {deck.length}</strong><div className="progress-track"><span style={{ width: `${((index + 1) / deck.length) * 100}%` }} /></div></div>
           {message && <p className="toast" role="status">{message}</p>}
-          <button className="next-button" onClick={nextQuestion}>下一题<ArrowRight /></button>
+          <div className="question-navigation">
+            <button className="previous-button" onClick={previousQuestion} disabled={index === 0}><ArrowLeft />上一题</button>
+            <button className="next-button" onClick={nextQuestion}>下一题<ArrowRight /></button>
+          </div>
         </footer></> : activeView === 'library' ? <QuestionLibrary questions={bank.questions} onSelectQuestion={openQuestion} progress={progress} /> : activeView === 'methodology' ? <MethodologyQuickReference methodologies={methodologies} /> : <StarCollection experiences={starExperiences} />}
       </section>
       {syncOpen ? (
