@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { BookOpenCheck, ChevronRight, EyeOff, Layers3 } from 'lucide-react'
 
-const DOMAINS = ['用户洞察', '大数据质量体系', '系统性测试设计', 'AI应用测试与评测', '缺陷风险定级']
+const DOMAINS = ['用户洞察', '大数据质量体系', '系统性测试设计', 'AI应用测试与评测', '缺陷风险定级', '资金类高风险业务测试']
 
 export default function MethodologyQuickReference({ methodologies }) {
   const [activeDomain, setActiveDomain] = useState(null)
