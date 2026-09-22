@@ -77,7 +77,11 @@ button:focus-visible { outline: 3px solid rgba(9, 105, 235, .26); outline-offset
 .reveal-panel li { counter-increment: hint; position: relative; padding: 3px 0 15px 48px; line-height: 1.62; color: #35465c; }
 .reveal-panel li::before { content: counter(hint); position: absolute; left: 0; top: 0; width: 30px; height: 30px; display: grid; place-items: center; background: #cef3ea; color: #087e68; border-radius: 50%; font-weight: 700; }
 .generated-note { margin: 3px 0 0 48px; color: #6c7c8f; font-size: 12px; }
-.answer-copy { margin: 20px 0 4px; color: #2d3d53; font-size: 17px; line-height: 1.9; }
+.answer-section { margin-top: 22px; }
+.answer-section + .answer-section { margin-top: 24px; padding-top: 22px; border-top: 1px solid #d7e1ed; }
+.answer-section h3 { margin: 0 0 9px; color: #175ea9; font-size: 15px; letter-spacing: .04em; }
+.detailed-answer-section h3 { color: #334b68; }
+.answer-copy { margin: 0; color: #2d3d53; font-size: 17px; line-height: 1.9; white-space: pre-wrap; }
 
 .progress-footer { min-height: 104px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 25px; padding: 20px clamp(28px, 5vw, 76px); }
 .progress-copy { display: flex; align-items: center; gap: 24px; flex: 1; }

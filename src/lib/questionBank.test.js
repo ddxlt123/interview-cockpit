@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import questions from '../data/questions.json'
 import { deriveHints, parseQuestionText } from './questionBank'
 
 describe('question bank parser', () => {
@@ -11,5 +12,11 @@ describe('question bank parser', () => {
 
   it('derives concise hints when the source has no hint field', () => {
     expect(deriveHints('我会先确认范围，再收集日志，并通过对照实验验证。最后沉淀回归用例。')).toHaveLength(3)
+  })
+
+  it('ships both reference and detailed answers for all 70 built-in questions', () => {
+    expect(questions).toHaveLength(70)
+    expect(questions.every((question) => question.answer.trim() && question.detailedAnswer.trim())).toBe(true)
+    expect(new Set(questions.map((question) => question.question))).toHaveProperty('size', 70)
   })
 })

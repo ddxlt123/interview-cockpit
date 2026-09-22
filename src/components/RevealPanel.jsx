@@ -16,8 +16,21 @@ export default function RevealPanel({ type, question }) {
   if (type === 'answer') {
     return (
       <section className="reveal-panel answer-panel" aria-live="polite">
-        <div className="panel-title"><FileText size={22} /><strong>参考作答</strong><ChevronUp size={21} /></div>
-        <p className="answer-copy">{question.answer}</p>
+        <div className="panel-title">
+          <FileText size={22} />
+          <strong>{question.detailedAnswer ? '参考作答与详细作答' : '参考作答'}</strong>
+          <ChevronUp size={21} />
+        </div>
+        <div className="answer-section">
+          <h3>参考作答</h3>
+          <p className="answer-copy">{question.answer}</p>
+        </div>
+        {question.detailedAnswer ? (
+          <div className="answer-section detailed-answer-section">
+            <h3>详细作答</h3>
+            <p className="answer-copy">{question.detailedAnswer}</p>
+          </div>
+        ) : null}
       </section>
     )
   }

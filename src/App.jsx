@@ -26,7 +26,7 @@ import useCloudProgressSync from './hooks/useCloudProgressSync'
 
 const STORAGE_KEY = 'interview-cockpit-bank-v1'
 const VIEW_COPY = {
-  practice: ['模拟面试', '从题库随机抽题，先独立作答，再按需查看提示与参考答案。'],
+  practice: ['模拟面试', '从题库随机抽题，先独立作答，再按需查看提示、参考作答与详细作答。'],
   library: ['全部题目', '浏览、搜索全部题目，选择任意一题开始练习。'],
   methodology: ['方法论速查', '按领域查找方法论，按需查看速记概要或完整记忆句。'],
   star: ['STAR 合集', '集中复习个人项目经历，按需查看行动链概要或完整 STAR 内容。'],
